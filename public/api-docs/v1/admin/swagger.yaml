@@ -1,0 +1,723 @@
+openapi: 3.0.0
+info:
+  title: Administrators's APIs
+  version: 'v1'
+  description: Administrators APIs Docs
+paths:
+  /admin/sign_in:
+    post:
+      summary: Sign In
+      tags:
+        - Sign In
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignIn'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Administrator'
+  /admin/administrators/me:
+    get:
+      summary: Get info
+      tags:
+        - Administrators
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Administrator details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Administrator'
+        '404':
+          description: Administrator not found
+    patch:
+      summary: Update info
+      tags:
+        - Administrators
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/UpdateAdministrator'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Administrator'
+  /admin/airports:
+    get:
+      summary: List airports
+      tags:
+        - Airports
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: object
+          properties:
+            q:
+              type: object
+              properties:
+                code_i_cont:
+                  type: string
+                  example: "HAN"
+                name_i_cont:
+                  type: string
+                  example: "Noi Bai International Airport"
+                city_i_cont:
+                  type: string
+                  example: "Hanoi"
+                country_i_cont:
+                  type: string
+                  example: "Vietnam"
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Airport'
+                  current_page:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 100
+  /admin/airports/:
+    get:
+      summary: List airports
+      tags:
+        - Airports
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: object
+          properties:
+            q:
+              type: object
+              properties:
+                arrival_flights_flight_id_eq:
+                  type: number
+                  example: 1
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Airport'
+                  current_page:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 100
+  /admin/aircrafts:
+    get:
+      summary: List aircrafts
+      tags:
+        - Aircrafts
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: object
+          properties:
+            q:
+              type: object
+              properties:
+                name_i_cont:
+                  type: string
+                  example: "Boeing AT-15"
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Aircraft'
+                  current_page:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 100
+  /admin/flights:
+    get:
+      summary: List flights
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: object
+          properties:
+            q:
+              type: object
+              properties:
+                aircraft_id_eq:
+                  type: number
+                  example: 1
+                departure_airport_id_eq:
+                  type: number
+                  example: 1
+                destination_airport_id_eq:
+                  type: number
+                  example: 2
+                departure_date_eq:
+                  type: string
+                  format: date-time
+                  example: "2024-09-30T10:00:00Z"
+                destination_date_eq:
+                  type: string
+                  format: date-time
+                  example: "2024-09-30T20:00:00Z"
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Flight'
+                  current_page:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 100
+  /admin/flights/:
+    get:
+      summary: List flights
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: object
+          properties:
+            q:
+              type: object
+              properties:
+                aircraft_name_i_cont:
+                  type: string
+                  example: "Boeing AT-15"
+                departure_airport_name_i_cont:
+                  type: string
+                  example: "Noi Bai International Airport"
+                departure_airport_code_i_cont:
+                  type: string
+                  example: "HAN"
+                departure_airport_city_i_cont:
+                  type: string
+                  example: "Hanoi"
+                departure_airport_country_i_cont:
+                  type: string
+                  example: "Vietnam"
+                destination_airport_name_i_cont:
+                  type: string
+                  example: "Tan Son Nhat International Airport"
+                destination_airport_code_i_cont:
+                  type: string
+                  example: "SGN"
+                destination_airport_city_i_cont:
+                  type: string
+                  example: "Ho Chi Minh City"
+                destination_airport_country_i_cont:
+                  type: string
+                  example: "Vietnam"
+                departure_date_eq:
+                  type: string
+                  format: date-time
+                  example: "2024-09-30T10:00:00Z"
+                destination_date_eq:
+                  type: string
+                  format: date-time
+                  example: "2024-09-30T20:00:00Z"
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Flight'
+                  current_page:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 100
+    post:
+      summary: Create flight
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                flight:
+                  type: object
+                  $ref: '#/components/schemas/FlightInfo'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Flight'
+  /admin/flights/{id}:
+    get:
+      summary: Detail flight
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Flight'
+  /admin/flights/{id}/seat_availabilities:
+    get:
+      summary: Detail flight's seat_availabilities
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SeatAvailability'
+  /admin/flights/{id}/pricings:
+    get:
+      summary: Detail flight's pricings
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pricing'
+    post:
+      summary: Create / Update flight's pricing
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PricingInfo'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pricing'
+  /admin/flights/{id}/:
+    delete:
+      summary: Destroy flight
+      tags:
+        - Flights
+      security:
+        - BearerAuth: []
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1000
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Administrator:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        is_active:
+          type: boolean
+    UpdateAdministrator:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        is_active:
+          type: boolean
+    SignIn:
+      type: object
+      properties:
+        email:
+          type: string
+          example: administrator+0@example.com
+        password:
+          type: string
+          example: "password"
+    Airport:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    Aircraft:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    Flight:
+      type: object
+      properties:
+        id:
+          type: string
+        aircraft_id:
+          type: number
+        departure_airport_id:
+          type: number
+        destination_airport_id:
+          type: number
+        departure_date:
+          type: string
+          format: date-time
+        destination_date:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    SeatAvailability:
+      type: object
+      properties:
+        id:
+          type: string
+        flight_id:
+          type: string
+        seat_code:
+          type: string
+        position:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    Pricing:
+      type: object
+      properties:
+        id:
+          type: string
+        flight_id:
+          type: string
+        seat_class:
+          type: string
+        price:
+          type: number
+        date:
+          type: string
+    PricingInfo:
+      type: object
+      properties:
+        seat_class:
+          type: string
+          example: economy
+        price:
+          type: number
+          example: 99.5
+    FlightInfo:
+      type: object
+      properties:
+        aircraft_id:
+          type: number
+          example: 1
+        departure_airport_id:
+          type: number
+          example: 1
+        destination_airport_id:
+          type: number
+          example: 2
+        departure_date:
+          type: string
+          format: date-time
+          example: "2024-10-31T10:00:00Z"
+        destination_date:
+          type: string
+          format: date-time
+          example: "2024-11-30T10:00:00Z"

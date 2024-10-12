@@ -1,0 +1,886 @@
+openapi: 3.0.0
+info:
+  title: Users's APIs
+  version: 'v1'
+  description: Users APIs Docs
+# servers:
+  # - url: ${HOST}
+    # description: Learning
+paths:
+  /api/v1/auth/sign_in:
+    post:
+      summary: Sign In
+      tags:
+        - Sign In & Sign Up
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignIn'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/User'
+  /api/v1/auth/:
+    post:
+      summary: Sign Up
+      tags:
+        - Sign In & Sign Up
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUp'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/User'
+  /api/v1/users/me:
+    get:
+      summary: Get info
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      # parameters:
+      #   - name: id
+      #     in: path
+      #     required: true
+      #     description: ID of the user to retrieve
+      #     schema:
+      #       type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    patch:
+      summary: Update info
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/UpdateUser'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/User'
+  /api/v1/airports:
+    get:
+      summary: List airports
+      tags:
+        - Airports
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: object
+          properties:
+            search:
+              type: string
+              example: "Vietnam"
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Airport'
+                  current_page:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 100
+  /api/v1/flights/:
+    get:
+      summary: List flights
+      tags:
+        - Flights
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          type: object
+          properties:
+            q:
+              type: object
+              properties:
+                departure_airport_name_i_cont:
+                  type: string
+                  example: "Noi Bai International Airport"
+                departure_airport_code_i_cont:
+                  type: string
+                  example: "HAN"
+                departure_airport_city_i_cont:
+                  type: string
+                  example: "Hanoi"
+                departure_airport_country_i_cont:
+                  type: string
+                  example: "Vietnam"
+                destination_airport_name_i_cont:
+                  type: string
+                  example: "Tan Son Nhat International Airport"
+                destination_airport_code_i_cont:
+                  type: string
+                  example: "SGN"
+                destination_airport_city_i_cont:
+                  type: string
+                  example: "Ho Chi Minh City"
+                destination_airport_country_i_cont:
+                  type: string
+                  example: "Vietnam"
+                departure_date_eq:
+                  type: string
+                  format: date-time
+                  example: "2024-09-30T10:00:00Z"
+                destination_date_eq:
+                  type: string
+                  format: date-time
+                  example: "2024-09-30T20:00:00Z"
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Flight'
+                  current_page:
+                    type: number
+                    example: 1
+                  total_pages:
+                    type: number
+                    example: 100
+  /api/v1/flights/{id}:
+    get:
+      summary: Detail flight
+      tags:
+        - Flights
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Flight'
+  /api/v1/flights/{id}/pricings:
+    get:
+      summary: Detail flight's pricings
+      tags:
+        - Flights
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pricing'
+  /api/v1/flights/{id}/seat_availabilities:
+    get:
+      summary: Detail flight's seat_availabilities
+      tags:
+        - Flights
+      parameters:
+      - name: id
+        in: path    # Đổi từ query thành path
+        required: true
+        schema:
+          type: number
+          example: 1
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 1
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: number
+          example: 10
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SeatAvailability'
+  /api/v1/bookings:
+    post:
+      summary: Booking One Way
+      tags:
+        - Bookings
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOneWayBooking'
+              # oneOf:
+              #   - $ref: '#/components/schemas/RequestOneWayBooking'
+              #   - $ref: '#/components/schemas/RequestRoundTripBooking'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ResponseOneWayBooking'
+  /api/v1/bookings/:
+    post:
+      summary: Booking Round Trip
+      tags:
+        - Bookings
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestRoundTripBooking'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/ResponseRoundTripBooking'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        is_active:
+          type: boolean
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        is_active:
+          type: boolean
+    SignIn:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user+0@example.com
+        password:
+          type: string
+          example: "password"
+    SignUp:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        password_confirmation:
+          type: string
+    Airport:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        country:
+          type: string
+        city:
+          type: string
+    Flight:
+      type: object
+      properties:
+        flight_id:
+          type: string
+        name:
+          type: string
+        aircraft:
+          type: object
+        departure_airport:
+          type: object
+        destination_airport:
+          type: object
+        departure_date:
+          type: string
+          format: date-time
+        destination_date:
+          type: string
+          format: date-time
+    SeatAvailability:
+      type: object
+      properties:
+        flight_id:
+          type: string
+        seat:
+          type: object
+        position:
+          type: string
+        status:
+          type: string
+        price:
+          type: number
+    Pricing:
+      type: object
+      properties:
+        flight_id:
+          type: string
+        seat_class:
+          type: string
+        price:
+          type: number
+        date:
+          type: string
+    RequestOneWayBooking:
+      type: object
+      properties:
+        booking:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: 
+                - one_way
+                - round_trip
+            departure_flight_id:
+              type: number
+              example: 1
+            booking_directions:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - departure
+                  # each_flight_id:
+                  flight_id:
+                    type: number
+                    example: 1
+                  booking_lines:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        quantity:
+                          type: number
+                    example:
+                    - type: "extra_baggage"
+                      quantity: 1
+        passengers:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: User 0
+              email:
+                type: string
+                example: user+0@example.com
+              phone_number:
+                type: string
+                example: "0987654321"
+              flights:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    # each_flight_id:
+                    flight_id:
+                      type: number
+                      example: 1
+                    seat_code:
+                      type: number
+                      example: 1
+    RequestRoundTripBooking:
+      type: object
+      properties:
+        booking:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - round_trip
+            departure_flight_id:
+              type: number
+              example: 1
+            destination_flight_id:
+              type: number
+              example: 2
+            booking_directions:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  flight_id:
+                    type: number
+                  booking_lines:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        quantity:
+                          type: number
+              example:
+              - type: "departure"
+                flight_id: 1
+                booking_lines:
+                  - type: "extra_baggage"
+                    quantity: 1
+              - type: "return"
+                flight_id: 2
+                booking_lines:
+                  - type: "extra_baggage"
+                    quantity: 1
+        passengers:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: User 0
+              email:
+                type: string
+                example: user+0@example.com
+              phone_number:
+                type: string
+                example: "0987654321"
+              flights:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    flight_id:
+                      type: number
+                    seat_code:
+                      type: number
+                example:
+                - flight_id: 1
+                  seat_code: 1
+                - flight_id: 2
+                  seat_code: 1
+    ResponseOneWayBooking:
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            type: object
+            properties:
+              ticket_id:
+                type: integer
+                example: 1
+              status:
+                type: string
+                example: "hold"
+              flight_id:
+                type: integer
+                example: 1
+              seat:
+                type: object
+                properties:
+                  seat_code:
+                    type: integer
+                    example: 1
+                  seat_class:
+                    type: string
+                    example: economy
+                  position:
+                    type: string
+                    example: "E0"
+                  status:
+                    type: string
+                    example: "hold"
+              passenger:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "User 0"
+                  email:
+                    type: string
+                    example: "user+0@example.com"
+                  phone_number:
+                    type: string
+                    example: "0987654321"
+              booking_id:
+                type: integer
+                example: 1
+        booking:
+          type: object
+          properties:
+            booking_id:
+              type: integer
+              example: 1
+            status:
+              type: string
+              example: "pending"
+            type:
+              type: string
+              example: "one_way"
+            departure_flight_id:
+              type: integer
+              example: 1
+            destination_flight_id:
+              type: integer
+              nullable: true
+              example: null
+            passenger_number:
+              type: integer
+              example: 1
+            amount:
+              type: number
+              format: float
+              nullable: true
+              example: 100
+            booking_directions:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: "departure"
+                  flight_id:
+                    type: integer
+                    example: 1
+                  amount:
+                    type: number
+                    format: float
+                    example: 100
+                  booking_lines:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: "seat_booking"
+                        seat_class:
+                          type: string
+                          example: "economy"
+                        quantity:
+                          type: integer
+                          example: 1
+                        sub_total_amount:
+                          type: number
+                          format: float
+                          example: 100
+                    example:
+                      - type: "seat_booking"
+                        seat_class: "economy"
+                        quantity: 1
+                        sub_total_amount: 100
+                      - type: "extra_baggage"
+                        seat_class: null
+                        quantity: 1
+                        sub_total_amount: 0
+    ResponseRoundTripBooking:
+      type: object
+      properties:
+        tickets:
+          type: array
+          description: List of tickets
+          items:
+            type: object
+            properties:
+              ticket_id:
+                type: integer
+              status:
+                type: string
+              flight_id:
+                type: integer
+              seat:
+                type: object
+                properties:
+                  seat_code:
+                    type: integer
+                  seat_class:
+                    type: string
+                  position:
+                    type: string
+                  status:
+                    type: string
+              passenger:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  phone_number:
+                    type: string
+              booking_id:
+                type: integer
+          example:
+            - ticket_id: 1
+              status: "hold"
+              flight_id: 1
+              seat:
+                seat_code: 1
+                seat_class: "economy"
+                position: "E0"
+                status: "hold"
+              passenger:
+                name: "User 0"
+                email: "user+0@example.com"
+                phone_number: "0987654321"
+              booking_id: 1
+            - ticket_id: 2
+              status: "hold"
+              flight_id: 2
+              seat:
+                seat_code: 1
+                seat_class: "economy"
+                position: "E0"
+                status: "hold"
+              passenger:
+                name: "User 0"
+                email: "user+0@example.com"
+                phone_number: "0987654321"
+              booking_id: 1
+        booking:
+          type: object
+          properties:
+            booking_id:
+              type: integer
+              example: 1
+            status:
+              type: string
+              example: "pending"
+            type:
+              type: string
+              example: "round_trip"
+            departure_flight_id:
+              type: integer
+              example: 1
+            destination_flight_id:
+              type: integer
+              example: 2
+            passenger_number:
+              type: integer
+              example: 1
+            amount:
+              type: integer
+              example: 200
+            booking_directions:
+              type: array
+              description: List of booking directions
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  flight_id:
+                    type: integer
+                  amount:
+                    type: integer
+                  booking_lines:
+                    type: array
+                    description: List of booking lines
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        seat_class:
+                          type: string
+                        quantity:
+                          type: integer
+                        sub_total_amount:
+                          type: integer
+              example:
+                - type: "departure"
+                  flight_id: 1
+                  amount: 100
+                  booking_lines:
+                    - type: "seat_booking"
+                      seat_class: "economy"
+                      quantity: 1
+                      sub_total_amount: 100
+                    - type: "extra_baggage"
+                      seat_class: null
+                      quantity: 1
+                      sub_total_amount: 0
+                - type: "return"
+                  flight_id: 2
+                  amount: 100
+                  booking_lines:
+                    - type: "seat_booking"
+                      seat_class: "economy"
+                      quantity: 1
+                      sub_total_amount: 100
+                    - type: "extra_baggage"
+                      seat_class: null
+                      quantity: 1
+                      sub_total_amount: 0
