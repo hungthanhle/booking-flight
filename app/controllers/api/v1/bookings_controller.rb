@@ -28,15 +28,6 @@ class Api::V1::BookingsController < Api::V1::BaseController
     booking = nil
     tickets = nil
     ActiveRecord::Base.transaction do
-      # bookings
-      booking = Booking.new(
-        type: booking_params[:type],
-        departure_flight_id: booking_params[:departure_flight_id],
-        destination_flight_id: booking_params[:destination_flight_id],
-        passenger_number: passengers_params.size
-      )
-      booking.save!
-
       # LOCK & UPDATE seat availabilities
       seat_availabilities = []
       booking_seats_params.each do |data|
@@ -54,6 +45,15 @@ class Api::V1::BookingsController < Api::V1::BaseController
       seat_availabilities.each do |seat_availability|
         seat_availability.update!(status: 'hold')
       end
+
+      # bookings
+      booking = Booking.new(
+        type: booking_params[:type],
+        departure_flight_id: booking_params[:departure_flight_id],
+        destination_flight_id: booking_params[:destination_flight_id],
+        passenger_number: passengers_params.size
+      )
+      booking.save!
 
       tickets = []
       # passengers & booking_passengers & tickets
