@@ -1,4 +1,6 @@
 class SeatAvailability < ApplicationRecord
+  self.primary_keys = :flight_id, :seat_code, :status
+
   belongs_to :flight, primary_key: 'flight_id'
   belongs_to :seat, foreign_key: 'seat_code', primary_key: 'seat_code'
 

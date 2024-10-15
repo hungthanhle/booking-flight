@@ -41,16 +41,15 @@ class Api::V1::BookingsController < Api::V1::BaseController
       seat_availabilities = []
       booking_seats_params.each do |data|
         # USE PRIMARY KEY
-        seat_availability = SeatAvailability.find_by(
-                                status: 'available',
-                                flight_id: data[:flight_id],
-                                seat_code: data[:seat_code])
-        if seat_availability.present?
-          seat_availability.lock!
-          seat_availabilities << seat_availability
-        else
+        seat_availability = SeatAvailability.where(status: 'available',
+                                    flight_id: data[:flight_id],
+                                    seat_code: data[:seat_code])
+                              .lock
+        if !seat_availability.present?
           raise ActiveRecord::Rollback, "Not available seats found"
         end
+
+        seat_availabilities.concat(seat_availability)
       end
       seat_availabilities.each do |seat_availability|
         seat_availability.update!(status: 'hold')

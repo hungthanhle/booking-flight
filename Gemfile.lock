@@ -93,6 +93,8 @@ GEM
       xpath (~> 3.2)
     case_transform (0.2)
       activesupport
+    composite_primary_keys (14.0.9)
+      activerecord (~> 7.0.2)
     concurrent-ruby (1.2.3)
     crass (1.0.6)
     date (3.3.4)
@@ -323,6 +325,7 @@ DEPENDENCIES
   activerecord-import
   bootsnap
   capybara
+  composite_primary_keys
   debug
   devise
   devise_token_auth
